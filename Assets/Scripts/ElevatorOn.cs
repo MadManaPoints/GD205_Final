@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ElevatorOn : MonoBehaviour
 {
-    private float moveSpeed = 10.0f;
+    private float moveSpeed = 1.0f;
     private PlayerMovement playerScript;
     void Start()
     {

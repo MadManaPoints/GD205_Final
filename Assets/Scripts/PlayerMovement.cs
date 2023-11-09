@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI; 
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -32,10 +33,16 @@ public class PlayerMovement : MonoBehaviour
     Vector3 moveDirection;
     Rigidbody playerRb;
     public Material green;
+    bool buttonDown;
     public bool buttonPressed; 
+    Vector3 centerScreen = new Vector3(0.5f, 0.5f, 0f);
+    [Header("Reticle")]
+    [SerializeField] Image ret; 
+    [SerializeField] Color retColor; 
 
     void Start()
     {
+        retColor.a = 1;
         playerRb = GetComponent<Rigidbody>();
         playerRb.freezeRotation = true;
         startSpeed = moveSpeed;
@@ -43,6 +50,26 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void Update(){
+        //cast to the center of the screen
+        Ray laser = Camera.main.ViewportPointToRay(centerScreen);
+        RaycastHit hit = new RaycastHit();
+
+        if (Physics.Raycast(laser, out hit)){
+            if(hit.collider.tag == "Button"){
+                ret.color = retColor; 
+
+                if(Input.GetMouseButtonDown(0) && hasKey){
+                    hit.collider.gameObject.GetComponent<Renderer>().material = green;
+                    buttonPressed = true;
+                }
+
+            } else {
+                ret.color = Color.gray;
+            }
+        }
+
+    
+
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
 
         MyInput();
@@ -116,9 +143,8 @@ public class PlayerMovement : MonoBehaviour
             Destroy(col.gameObject);
         }
 
-        if(col.gameObject.tag == "Button" && hasKey){
-            col.gameObject.GetComponent<Renderer>().material = green;
-            buttonPressed = true;
-        }
+        //if(col.gameObject.tag == "Button" && hasKey){
+            
+       // }
     }
 }
