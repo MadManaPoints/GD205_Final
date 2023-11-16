@@ -6,7 +6,9 @@ public class GameManager : MonoBehaviour
 { 
     public bool letThereBeLight;
     public bool teleporterOn;
+    public bool openSesame;
     [SerializeField] GameObject teleporters;
+    [SerializeField] GameObject thanks; 
     void Start()
     {
         
@@ -25,6 +27,10 @@ public class GameManager : MonoBehaviour
 
         if(teleporterOn){
             teleporters.SetActive(true);
+        }
+
+        if(openSesame){
+            thanks.SetActive(true);
         }
     }
 }
