@@ -7,6 +7,11 @@ TagManager:
   - Ground
   - Key
   - Button
+  - Book Key
+  - Missing Book
+  - Teleporter 1
+  - Teleporter 2
+  - Missing Book Key
   layers:
   - Default
   - TransparentFX

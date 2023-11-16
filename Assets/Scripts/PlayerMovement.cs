@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private GameManager gameManager;
+
     [Header("Movement")]
     public float moveSpeed;
     public float sprintSpeed;
@@ -26,7 +28,10 @@ public class PlayerMovement : MonoBehaviour
     public float playerHeight; 
     public LayerMask whatIsGround;
     bool grounded;
-    bool hasKey;
+    //bool hasKey;
+    int keyNum = 0;
+    bool hasBook;
+    bool placedBook;
     public Transform orientation;
     float hInput;
     float vInput;
@@ -38,10 +43,14 @@ public class PlayerMovement : MonoBehaviour
     Vector3 centerScreen = new Vector3(0.5f, 0.5f, 0f);
     [Header("Reticle")]
     [SerializeField] Image ret; 
-    [SerializeField] Color retColor; 
+    [SerializeField] Color retColor;
+    
+    public MeshRenderer meshRender; 
 
     void Start()
     {
+        //I SHOULD MOVE A LOT OF THIS TO A DIFFERENT SCRIPT 
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>(); 
         retColor.a = 1;
         playerRb = GetComponent<Rigidbody>();
         playerRb.freezeRotation = true;
@@ -55,20 +64,35 @@ public class PlayerMovement : MonoBehaviour
         RaycastHit hit = new RaycastHit();
 
         if (Physics.Raycast(laser, out hit)){
-            if(hit.collider.tag == "Button"){
-                ret.color = retColor; 
-
-                if(Input.GetMouseButtonDown(0) && hasKey){
-                    hit.collider.gameObject.GetComponent<Renderer>().material = green;
-                    buttonPressed = true;
-                }
-
+            if(hit.collider.tag == "Button" || hit.collider.tag == "Missing Book" || hit.collider.tag == "Missing Book Key"){
+                ret.color = retColor;
             } else {
                 ret.color = Color.gray;
             }
+
+                //activates button 
+            if(Input.GetMouseButtonDown(0) && keyNum == 3){
+                hit.collider.gameObject.GetComponent<Renderer>().material = green;
+                buttonPressed = true;
+            }
+
+                //adds missing book in library
+            if(Input.GetMouseButtonDown(0) && hasBook){
+                MeshRenderer m = meshRender.GetComponent<MeshRenderer>();
+                m.enabled = true;
+                placedBook = true;
+                hasBook = false; 
+            }
+
+            if(Input.GetMouseButtonDown(0) && !hasBook && hit.collider.tag == "Missing Book"){
+                Destroy(hit.transform.gameObject);
+                hasBook = true;
+            }
         }
 
-    
+        if(placedBook){
+                gameManager.teleporterOn = true;
+            }
 
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
 
@@ -139,12 +163,21 @@ public class PlayerMovement : MonoBehaviour
 
     void OnTriggerEnter(Collider col){
         if(col.gameObject.tag == "Key"){
-            hasKey = true;
+            keyNum += 1;
             Destroy(col.gameObject);
         }
 
-        //if(col.gameObject.tag == "Button" && hasKey){
-            
-       // }
+        if(col.gameObject.tag == "Book Key"){
+            Destroy(col.gameObject);
+            gameManager.letThereBeLight = true; 
+        }
+
+        if(col.gameObject.tag == "Teleporter 1"){
+            transform.position  = new Vector3(transform.position.x, 20.0f, transform.position.z); 
+        }
+
+        if(col.gameObject.tag == "Teleporter 2"){
+            transform.position  = new Vector3(transform.position.x, 1.0f, transform.position.z); 
+        }
     }
 }
