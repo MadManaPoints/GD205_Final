@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -29,9 +30,10 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask whatIsGround;
     bool grounded;
     //bool hasKey;
-    int keyNum = 0;
+    public int keyNum = 0;
     bool hasBook;
     bool placedBook;
+    public bool redButtonPressed;
     public Transform orientation;
     float hInput;
     float vInput;
@@ -71,13 +73,18 @@ public class PlayerMovement : MonoBehaviour
             }
 
                 //activates button 
-            if(Input.GetMouseButtonDown(0) && keyNum == 3){
-                hit.collider.gameObject.GetComponent<Renderer>().material = green;
-                buttonPressed = true;
+            if(Input.GetMouseButtonDown(0) && hit.collider.tag == "Button"){
+                redButtonPressed = true; 
+                if(keyNum == 3){
+                    hit.collider.gameObject.GetComponent<Renderer>().material = green;
+                    buttonPressed = true;
+                }
+            } else if(Input.GetMouseButtonUp(0)){
+                redButtonPressed = false; 
             }
 
                 //adds missing book in library
-            if(Input.GetMouseButtonDown(0) && hasBook){
+            if(Input.GetMouseButtonDown(0) && hasBook && hit.collider.tag == "Missing Book Key"){
                 MeshRenderer m = meshRender.GetComponent<MeshRenderer>();
                 m.enabled = true;
                 placedBook = true;
@@ -172,12 +179,12 @@ public class PlayerMovement : MonoBehaviour
             gameManager.letThereBeLight = true; 
         }
 
-        if(col.gameObject.tag == "Teleporter 1"){
-            transform.position  = new Vector3(transform.position.x, 20.0f, transform.position.z); 
+        if(col.gameObject.tag == "Teleporter 1" && gameManager.teleporterOn){
+            transform.position  = new Vector3(transform.position.x, 15.0f, transform.position.z); 
         }
 
-        if(col.gameObject.tag == "Teleporter 2"){
-            transform.position  = new Vector3(transform.position.x, 1.0f, transform.position.z); 
+        if(col.gameObject.tag == "Level Two"){
+            gameManager.levelTwo = true;
         }
     }
 }

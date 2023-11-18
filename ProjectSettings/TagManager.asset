@@ -12,6 +12,7 @@ TagManager:
   - Teleporter 1
   - Teleporter 2
   - Missing Book Key
+  - Level Two
   layers:
   - Default
   - TransparentFX

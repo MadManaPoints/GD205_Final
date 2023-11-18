@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Search;
 using UnityEngine;
 
 public class MoveStatue : MonoBehaviour
@@ -15,7 +14,7 @@ public class MoveStatue : MonoBehaviour
         playerScript = GameObject.Find("Player").GetComponent<PlayerMovement>();
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>(); 
         startPos = transform.position;
-        offset = new Vector3(transform.position.x + 5.0f, transform.position.y, transform.position.z); 
+        offset = new Vector3(transform.position.x + 2.0f, transform.position.y, transform.position.z); 
     }
 
     // Update is called once per frame
