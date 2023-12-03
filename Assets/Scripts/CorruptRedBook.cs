@@ -5,10 +5,10 @@ using UnityEngine;
 public class CorruptRedBook : MonoBehaviour
 {
     public ParticleSystem corruptRedBook;
-    private GameManager gameManager; 
+    private SceneOneManager sceneManager; 
     void Start()
     {
-        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>(); 
+        sceneManager = GameObject.Find("Scene One Manager").GetComponent<SceneOneManager>(); 
         //corruptRedBook.Play(); idk why this doesn't work 
     }
 

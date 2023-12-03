@@ -6,8 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private GameManager gameManager;
-
     [Header("Movement")]
     public float moveSpeed;
     public float sprintSpeed;
@@ -18,7 +16,6 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce;
     public float jumpCooldown;
     public float airMultiplier;
-    public float gravityMultiplier = 1.5f; 
     bool readyToJump = true;
 
     [Header("Keybinds")]
@@ -32,8 +29,9 @@ public class PlayerMovement : MonoBehaviour
     //bool hasKey;
     public int keyNum = 0;
     bool hasBook;
-    bool placedBook;
+    public bool placedBook;
     public bool redButtonPressed;
+    public bool holding;
     public Transform orientation;
     float hInput;
     float vInput;
@@ -43,30 +41,37 @@ public class PlayerMovement : MonoBehaviour
     bool buttonDown;
     public bool buttonPressed; 
     Vector3 centerScreen = new Vector3(0.5f, 0.5f, 0f);
+
     [Header("Reticle")]
     [SerializeField] Image ret; 
     [SerializeField] Color retColor;
     
-    public MeshRenderer meshRender; 
+    public MeshRenderer meshRender;
+    private GameManager gameManager;
+    private PlayerController playerController;
 
     void Start()
     {
-        //I SHOULD MOVE A LOT OF THIS TO A DIFFERENT SCRIPT 
-        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>(); 
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        playerController = GameObject.Find("Player Cam").GetComponent<PlayerController>();
         retColor.a = 1;
         playerRb = GetComponent<Rigidbody>();
         playerRb.freezeRotation = true;
         startSpeed = moveSpeed;
-        Physics.gravity *= gravityMultiplier;
     }
 
     private void Update(){
+        //rotates player
+        if(gameManager.startGame){
+            //transform.eulerAngles = new Vector3(0f, playerController.transform.eulerAngles.y, 0f);
+        }
+
         //cast to the center of the screen
         Ray laser = Camera.main.ViewportPointToRay(centerScreen);
         RaycastHit hit = new RaycastHit();
 
         if (Physics.Raycast(laser, out hit)){
-            if(hit.collider.tag == "Button" || hit.collider.tag == "Missing Book" || hit.collider.tag == "Missing Book Key"){
+            if(hit.collider.tag == "Button" || hit.collider.tag == "Missing Book" || hit.collider.tag == "Missing Book Key" || hit.collider.tag == "Box"){
                 ret.color = retColor;
             } else {
                 ret.color = Color.gray;
@@ -95,15 +100,19 @@ public class PlayerMovement : MonoBehaviour
                 Destroy(hit.transform.gameObject);
                 hasBook = true;
             }
-        }
 
-        if(placedBook){
-                gameManager.teleporterOn = true;
+            if(Input.GetMouseButtonDown(0) && hit.rigidbody && hit.collider.tag == "Box"){
+                holding = true; 
+            } else if(Input.GetMouseButtonUp(0)){
+                holding = false; 
             }
+        }
 
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
 
-        MyInput();
+        if(gameManager.startGame){
+            MyInput();
+        }
         SpeedControl();
 
         //handles drag
@@ -115,7 +124,9 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void FixedUpdate(){
-        MovePlayer();
+        if(gameManager.startGame){
+            MovePlayer();
+        }
     }
 
     private void MyInput(){
@@ -166,25 +177,5 @@ public class PlayerMovement : MonoBehaviour
 
     private void ResetJump(){
         readyToJump = true;
-    }
-
-    void OnTriggerEnter(Collider col){
-        if(col.gameObject.tag == "Key"){
-            keyNum += 1;
-            Destroy(col.gameObject);
-        }
-
-        if(col.gameObject.tag == "Book Key"){
-            Destroy(col.gameObject);
-            gameManager.letThereBeLight = true; 
-        }
-
-        if(col.gameObject.tag == "Teleporter 1" && gameManager.teleporterOn){
-            transform.position  = new Vector3(transform.position.x, 15.0f, transform.position.z); 
-        }
-
-        if(col.gameObject.tag == "Level Two"){
-            gameManager.levelTwo = true;
-        }
     }
 }

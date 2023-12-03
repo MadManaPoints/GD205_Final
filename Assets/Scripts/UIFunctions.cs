@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.SceneManagement;
 
 public class UIFunctions : MonoBehaviour
 {
-    public Button buttonOne; 
-    public Button buttonTwo;
-
-
-    public GameObject button; 
+    public Button startGameButton;
+    public GameObject ret; 
     void Start()
     {
-        //buttonOne = GameObject.Find("Button").GetComponentInChildren<Text>();
+        Button butn = startGameButton.GetComponent<Button>();
+        butn.onClick.AddListener(HideButton);
     }
 
     // Update is called once per frame
@@ -23,7 +20,8 @@ public class UIFunctions : MonoBehaviour
         
     }
 
-    public void ChangeButton(){
-        //buttonOne.text = "Yer"; 
+    public void HideButton(){
+        ret.SetActive(true); 
+        Destroy(gameObject);
     }
 }

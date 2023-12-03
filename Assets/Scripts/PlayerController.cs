@@ -8,21 +8,28 @@ public class PlayerController : MonoBehaviour
     private float yRotation;
     public float sensX;
     public float sensY;
-    public Transform orientation; 
+    public Transform orientation;
+    private GameManager gameManager;
 
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
     }
 
     // Update is called once per frame
     private void Update()
     {
+        if(gameManager.startGame){
+            Cursor.lockState = CursorLockMode.Locked;
+            CameraControls();
+        }
+    }
+
+    private void CameraControls(){
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
 
-        //I wonder why it has to be set up this way. Hurts me brain. 
+        //I wonder why it has to be set up this way. Hurts me brain.
         yRotation += mouseX;
         xRotation -= mouseY;
 

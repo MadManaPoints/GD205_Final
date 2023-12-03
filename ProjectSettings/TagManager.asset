@@ -13,6 +13,8 @@ TagManager:
   - Teleporter 2
   - Missing Book Key
   - Level Two
+  - Game Manager
+  - Box
   layers:
   - Default
   - TransparentFX

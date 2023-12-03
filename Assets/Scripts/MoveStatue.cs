@@ -8,11 +8,12 @@ public class MoveStatue : MonoBehaviour
     Vector3 startPos;
     Vector3 offset; 
     private PlayerMovement playerScript;
-    private GameManager gameManager; 
+    private SceneOneManager sceneManager;
+    private GameManager gameManager;
     void Start()
     {
         playerScript = GameObject.Find("Player").GetComponent<PlayerMovement>();
-        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>(); 
+        sceneManager = GameObject.Find("Scene One Manager").GetComponent<SceneOneManager>(); 
         startPos = transform.position;
         offset = new Vector3(transform.position.x + 2.0f, transform.position.y, transform.position.z); 
     }
@@ -25,7 +26,7 @@ public class MoveStatue : MonoBehaviour
                 transform.Translate(Vector3.right * -speed * Time.deltaTime);
             } else {
                 transform.position = transform.position;
-                gameManager.openSesame = true;  
+                sceneManager.openSesame = true;  
             }
         }
     }

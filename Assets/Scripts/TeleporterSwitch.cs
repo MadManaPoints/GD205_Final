@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class TeleporterSwitch : MonoBehaviour
 {
-    private GameManager gameManager;
+    private SceneOneManager sceneManager;
     [SerializeField] GameObject teleporterObj;
     ParticleSystem teleporter; 
     void Start()
     {
-        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        sceneManager = GameObject.Find("Scene One Manager").GetComponent<SceneOneManager>();
         teleporter = GetComponent<ParticleSystem>();
     }
 
     
     void Update()
     {
-        if(gameManager.teleporterOn){
+        if(sceneManager.teleporterOn){
             if(!teleporter.isPlaying){
                 teleporter.Play();
             }
