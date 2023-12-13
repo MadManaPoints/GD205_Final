@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -30,6 +31,7 @@ public class PlayerMovement : MonoBehaviour
     public int keyNum = 0;
     bool hasBook;
     public bool placedBook;
+    bool toJump = true; 
     public bool redButtonPressed;
     public bool holding;
     public Transform orientation;
@@ -49,7 +51,8 @@ public class PlayerMovement : MonoBehaviour
     public MeshRenderer meshRender;
     private GameManager gameManager;
     private PlayerController playerController;
-
+    PlayerControls controller;
+    
     void Start()
     {
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
@@ -79,13 +82,13 @@ public class PlayerMovement : MonoBehaviour
 
                 //activates button 
             if(Input.GetMouseButtonDown(0) && hit.collider.tag == "Button"){
-                redButtonPressed = true; 
+                redButtonPressed = true;
                 if(keyNum == 3){
                     hit.collider.gameObject.GetComponent<Renderer>().material = green;
                     buttonPressed = true;
                 }
             } else if(Input.GetMouseButtonUp(0)){
-                redButtonPressed = false; 
+                redButtonPressed = false;
             }
 
                 //adds missing book in library
@@ -93,7 +96,7 @@ public class PlayerMovement : MonoBehaviour
                 MeshRenderer m = meshRender.GetComponent<MeshRenderer>();
                 m.enabled = true;
                 placedBook = true;
-                hasBook = false; 
+                hasBook = false;
             }
 
             if(Input.GetMouseButtonDown(0) && !hasBook && hit.collider.tag == "Missing Book"){
@@ -102,9 +105,9 @@ public class PlayerMovement : MonoBehaviour
             }
 
             if(Input.GetMouseButtonDown(0) && hit.rigidbody && hit.collider.tag == "Box"){
-                holding = true; 
+                holding = true;
             } else if(Input.GetMouseButtonUp(0)){
-                holding = false; 
+                holding = false;
             }
         }
 
@@ -134,11 +137,19 @@ public class PlayerMovement : MonoBehaviour
         vInput = Input.GetAxisRaw("Vertical");
 
         //check for jump
-        if(Input.GetKey(jumpKey) && readyToJump && grounded){
-            readyToJump = false;
-            Jump();
-            Invoke(nameof(ResetJump), jumpCooldown);
+        if(toJump){
+            if(Input.GetKeyDown(jumpKey) && readyToJump && grounded){
+                toJump = false;
+                readyToJump = false;
+                Jump();
+                Invoke(nameof(ResetJump), jumpCooldown);
+            }
         }
+
+        if(!toJump && Input.GetKeyUp(jumpKey)){
+            toJump = true;
+        }
+        
     }
 
     private void MovePlayer(){
