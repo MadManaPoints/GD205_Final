@@ -20,8 +20,7 @@ public class HoldController : MonoBehaviour
     private float holdForce;
     private bool isHeld;
     private bool snapPosition;
-    //float maxSpeed = 2500.0f; 
-    // Start is called before the first frame update
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -30,11 +29,23 @@ public class HoldController : MonoBehaviour
     void Update()
     {
         //set the box being held to the player holding the box
-        isHeld = pm.holding;
+        if(!pm.holding){
+            isHeld = false; 
+            gameObject.layer = 0; 
+        }
+        
+        if(gameObject.layer == 3 && pm.holding){
+            isHeld = true;
+        }
 
-        if (isHeld)
-        {
-            
+        if (isHeld){
+            rb.useGravity = false;
+            rb.drag = 10; 
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+        } else {
+            rb.useGravity = true;
+            rb.drag = 0;
+            rb.constraints = RigidbodyConstraints.None;
         }
     }
 
@@ -50,7 +61,7 @@ public class HoldController : MonoBehaviour
                 transform.position = holder.position;
             }
 
-            //if (Vector3.Distance(transform.position, holder.position) > 0.2f)
+            if (Vector3.Distance(transform.position, holder.position) > 0.2f)
             {
                 //updates the position of the box using physics if we get too close to it
                 Vector3 moveBox = holder.position - transform.position;
@@ -62,7 +73,5 @@ public class HoldController : MonoBehaviour
         {
             snapPosition = false;
         }
-
-
     }
 }

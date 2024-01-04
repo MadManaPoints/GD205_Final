@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
+//using UnityEngine.SceneManagement;
+//using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -34,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
     bool toJump = true; 
     public bool redButtonPressed;
     public bool holding;
+    float raycastDist = 25.0f; 
     public Transform orientation;
     float hInput;
     float vInput;
@@ -73,7 +74,7 @@ public class PlayerMovement : MonoBehaviour
         Ray laser = Camera.main.ViewportPointToRay(centerScreen);
         RaycastHit hit = new RaycastHit();
 
-        if (Physics.Raycast(laser, out hit)){
+        if (Physics.Raycast(laser, out hit, raycastDist)){
             if(hit.collider.tag == "Button" || hit.collider.tag == "Missing Book" || hit.collider.tag == "Missing Book Key" || hit.collider.tag == "Box"){
                 ret.color = retColor;
             } else {
@@ -104,10 +105,15 @@ public class PlayerMovement : MonoBehaviour
                 hasBook = true;
             }
 
-            if(Input.GetMouseButtonDown(0) && hit.rigidbody && hit.collider.tag == "Box"){
-                holding = true;
-            } else if(Input.GetMouseButtonUp(0)){
+            if(Input.GetMouseButtonUp(0)){
                 holding = false;
+            }
+            
+            if(Input.GetMouseButtonDown(0) && hit.rigidbody && hit.collider.tag == "Box"){
+                hit.collider.gameObject.layer = 3; 
+                if (Vector3.Distance(transform.position, hit.collider.transform.position) <= 5.0f){
+                    holding = true;
+                }
             }
         }
 

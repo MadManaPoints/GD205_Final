@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     void Start(){
         if(levelTwo){
             startGame = true;
+        } else {
+            startGame = true;
         }
     }
     void Awake()

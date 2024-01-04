@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 6837308881960425981}
   - component: {fileID: 8658765995295403185}
   - component: {fileID: 2914967780463886082}
-  - component: {fileID: 2787357929395120836}
+  - component: {fileID: 244339083205404765}
+  - component: {fileID: 2103771112756585574}
   m_Layer: 0
   m_Name: Box
   m_TagString: Box
@@ -134,7 +135,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2787357929395120836
+--- !u!114 &244339083205404765
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,7 +144,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 7885913889579180825}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c288737470e75f4aa4f6eb1b49c29e3, type: 3}
+  m_Script: {fileID: 11500000, guid: 72496c8f84e60264099253eb3f36c599, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  holdSpace: {fileID: 0}
+  pm: {fileID: 0}
+  holder: {fileID: 0}
+  holdDistance: 4
+  arbitraryNum: 15
+  holdForce: 2500
+--- !u!114 &2103771112756585574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7885913889579180825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d150c0f580460fd419fb4813537b1712, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonObjs: 0000

@@ -12,10 +12,10 @@ public class OpenDoor : MonoBehaviour
     Vector3 rightPos; 
     float newLeft; 
     float newRight;
-    private PressButtons button;
+    BoxCollisions box;
     void Start()
     {
-        button = GameObject.Find("Floor Button").GetComponent<PressButtons>();
+        box = GameObject.Find("Box").GetComponent<BoxCollisions>();
 
         for(int i = 0; i < left.Length; i++){
             //hold start position to return when closed
@@ -37,37 +37,36 @@ public class OpenDoor : MonoBehaviour
         for(int i = 0; i < left.Length; i++){
             left[i].transform.position = leftPos;
             right[i].transform.position = rightPos;
-        }
-        
 
-        if(button.pressButton){
-            //open the left door when red button is pressed
-            if(leftPos.z < newLeft){
-                leftPos.z += 10.0f * Time.deltaTime;  
-            } else {
-                leftPos.z = newLeft; 
+            if(box.buttonObjs[i]){
+                //open the left door when red button is pressed
+                if(leftPos.z < newLeft){
+                    leftPos.z += 10.0f * Time.deltaTime;  
+                } else {
+                    leftPos.z = newLeft; 
+                }
+
+                //open the right door when red button is pressed
+                if(rightPos.z > newRight){
+                    rightPos.z -= 10.0f * Time.deltaTime;
+                } else {
+                    rightPos.z = newRight; 
+                }
             }
 
-            //open the right door when red button is pressed
-            if(rightPos.z > newRight){
-                rightPos.z -= 10.0f * Time.deltaTime;
-            } else {
-                rightPos.z = newRight; 
-            }
-        }
+            //close doors 
+            if(!box.buttonObjs[i]){
+                if(leftPos.z > startLeft.z){
+                     leftPos.z -= 10.0f * Time.deltaTime;
+                } else {
+                        leftPos.z = startLeft.z; 
+                }
 
-        //close doors 
-        if(!button.pressButton){
-            if(leftPos.z > startLeft.z){
-                 leftPos.z -= 10.0f * Time.deltaTime;
-            } else {
-                    leftPos.z = startLeft.z; 
-            }
-
-            if(rightPos.z < startRight.z){
-                rightPos.z += 10.0f * Time.deltaTime;
-            } else {
-                rightPos.z = startRight.z; 
+                if(rightPos.z < startRight.z){
+                   rightPos.z += 10.0f * Time.deltaTime;
+                } else {
+                    rightPos.z = startRight.z; 
+                }
             }
         }
     }

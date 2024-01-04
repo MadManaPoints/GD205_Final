@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
+//using UnityEngine.SceneManagement;
 using TMPro;
-using UnityEditor.UI;
+//using UnityEditor.UI;
 
 public class UIFunctions : MonoBehaviour
 {
@@ -49,6 +49,10 @@ public class UIFunctions : MonoBehaviour
 
         pause.SetActive(false);
         options.SetActive(false);
+
+        //level two shortcut 
+        ret.SetActive(true);
+        start.SetActive(false);
     }
 
     void Update()
@@ -99,8 +103,8 @@ public class UIFunctions : MonoBehaviour
     }
 
     public void QuitGame(){
-        UnityEditor.EditorApplication.isPlaying = false;
-        Debug.Log("YEERR");
+        //UnityEditor.EditorApplication.isPlaying = false;
+        //Debug.Log("YEERR");
         Application.Quit();
     }
 }

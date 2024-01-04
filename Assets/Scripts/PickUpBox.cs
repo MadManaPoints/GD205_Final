@@ -28,17 +28,5 @@ public class PickUpBox : MonoBehaviour
             boxRb.drag = 0;
             boxRb.constraints = RigidbodyConstraints.None; 
         }
-
-
-        if(player.holding){
-            //FollowPlayer(); 
-        }
-    }
-
-    void FollowPlayer(){
-        if(Vector3.Distance(transform.position, holdSpace.transform.position) > 0.1f){
-            Vector3 moveBox = (holdSpace.transform.position - transform.position);
-            boxRb.AddForce(moveBox * 2500.0f); 
-        }
     }
 }
