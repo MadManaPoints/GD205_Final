@@ -9,7 +9,8 @@ public class NewButtonPress : MonoBehaviour
     [SerializeField] Vector3 newPos;
     [SerializeField] Material green;
     [SerializeField] Material red;
-    [SerializeField] bool pressButton;
+    public bool pressButton;
+    public bool check; 
     [SerializeField] GameObject left;
     [SerializeField] GameObject right; 
     Vector3 startLeft;
@@ -84,13 +85,15 @@ public class NewButtonPress : MonoBehaviour
     }
 
     void OnTriggerEnter(Collider col){
-        if(col.gameObject.tag == "Box"){
+        if(col.gameObject.tag == "Box" || col.gameObject.tag == "Vessel"){
+            check = true; 
             pressButton = true; 
         }
     }
 
     void OnTriggerExit(Collider col){
-        if(col.gameObject.tag == "Box"){
+        if(col.gameObject.tag == "Box" || col.gameObject.tag == "Vessel"){
+            check = false; 
             pressButton = false; 
         }
     }

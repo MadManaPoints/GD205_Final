@@ -16,6 +16,7 @@ TagManager:
   - Game Manager
   - Box
   - Floor Button
+  - Vessel
   layers:
   - Default
   - TransparentFX
@@ -23,7 +24,7 @@ TagManager:
   - Grab
   - Water
   - UI
-  - 
+  - Button
   - 
   - 
   - 

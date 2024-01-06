@@ -31,6 +31,7 @@ public class PlayerMovement : MonoBehaviour
     public int keyNum = 0;
     bool hasBook;
     public bool placedBook;
+    public bool summon; 
     bool toJump = true; 
     public bool redButtonPressed;
     public bool holding;
@@ -75,7 +76,7 @@ public class PlayerMovement : MonoBehaviour
         RaycastHit hit = new RaycastHit();
 
         if (Physics.Raycast(laser, out hit, raycastDist)){
-            if(hit.collider.tag == "Button" || hit.collider.tag == "Missing Book" || hit.collider.tag == "Missing Book Key" || hit.collider.tag == "Box"){
+            if(hit.collider.tag == "Button" || hit.collider.tag == "Missing Book" || hit.collider.tag == "Missing Book Key" || hit.collider.tag == "Box" || hit.collider.tag == "Vessel"){
                 ret.color = retColor;
             } else {
                 ret.color = Color.gray;
@@ -109,10 +110,20 @@ public class PlayerMovement : MonoBehaviour
                 holding = false;
             }
             
-            if(Input.GetMouseButtonDown(0) && hit.rigidbody && hit.collider.tag == "Box"){
+            if(Input.GetMouseButtonDown(0) && hit.rigidbody && hit.collider.tag == "Box" && grounded){
                 hit.collider.gameObject.layer = 3; 
                 if (Vector3.Distance(transform.position, hit.collider.transform.position) <= 5.0f){
                     holding = true;
+                }
+            }
+
+            if(Input.GetMouseButtonUp(0) && hit.collider.tag == "Vessel" && !summon){
+                if(Vector3.Distance(transform.position, hit.collider.transform.position) <= 10.0f){
+                    summon = true;
+                }
+            } else if (Input.GetMouseButtonUp(0) && hit.collider.tag == "Vessel" && summon){
+                if(Vector3.Distance(transform.position, hit.collider.transform.position) <= 10.0f){
+                    summon = false;
                 }
             }
         }

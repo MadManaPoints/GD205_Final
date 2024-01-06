@@ -7,29 +7,40 @@ public class NavFollow : MonoBehaviour
 {
     NavMeshAgent agent;
     Animator animator;
+    PlayerMovement player;
+    bool move; 
     //place for target to go
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+
+        player = GameObject.Find("Player").GetComponent<PlayerMovement>(); 
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-
-        Ray laser = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit = new RaycastHit();
-
-        if (Physics.Raycast(laser, out hit) && Input.GetMouseButtonDown(0)){
-            agent.SetDestination(hit.point);
+        if(player.summon){
+            move = true;
+            Debug.Log("YERRR");
+        } else {
+            move = false;
         }
 
-        if(agent.velocity == Vector3.zero){
-            animator.SetBool("Walking", false);
-        } else {
-            animator.SetBool("Walking", true);
+        if(move){
+            if(Vector3.Distance(transform.position, player.transform.position) >= 4.0f){
+                agent.isStopped = false;
+                agent.SetDestination(player.transform.position);
+            } else {
+                agent.isStopped = true;
+            }
+
+            if(agent.velocity == Vector3.zero){
+                animator.SetBool("Walking", false);
+            } else {
+                animator.SetBool("Walking", true);
+            }
         }
     }
 }
