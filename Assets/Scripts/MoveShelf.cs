@@ -6,17 +6,22 @@ public class MoveShelf : MonoBehaviour
 {
     bool pressButton;
     [SerializeField] GameObject shelf;
-    Vector3 shelfPos; 
+    Vector3 startPos;
+    Vector3 shelfPos;
     Vector3 newShelfPos;
     [SerializeField] Material green;
     [SerializeField] Material red; 
     Vector3 pos; 
     Vector3 newPos;
+    [SerializeField]
+    float speed = 4.0f; 
 
     void Start()
     {
         pos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         newPos = new Vector3(pos.x, pos.y - 0.129f, pos.z);
+
+        startPos = new Vector3(shelf.transform.position.x, shelf.transform.position.y, shelf.transform.position.z);
 
         shelfPos = new Vector3(shelf.transform.position.x, shelf.transform.position.y, shelf.transform.position.z);
         newShelfPos = new Vector3(shelf.transform.position.x, shelf.transform.position.y, 7.0f);
@@ -31,17 +36,22 @@ public class MoveShelf : MonoBehaviour
             GetComponent<Renderer>().material = green;
 
             if(shelfPos.z < newShelfPos.z){
-                shelfPos.z += 2.0f * Time.deltaTime;
+                shelfPos.z += speed * Time.deltaTime;
             } else {
                 shelfPos = newShelfPos;
             }
         }
         
-        //probably not necessary to move shelf back 
-        //if(!pressButton){
-        //    transform.position = pos;
-        //    GetComponent<Renderer>().material = red;
-        //}
+        if(!pressButton){
+            transform.position = pos;
+            GetComponent<Renderer>().material = red;
+
+            if(shelfPos.z > startPos.z){
+                shelfPos.z -= speed * Time.deltaTime; 
+            } else {
+                shelfPos = startPos; 
+            }
+        }
     }
 
     void OnTriggerEnter(Collider col){

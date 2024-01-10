@@ -11,8 +11,14 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed;
     public float sprintSpeed;
     private float startSpeed;
-
     public float groundDrag;
+    public MovementState state;
+
+    [Header("Crouching")]
+    public float crouchSpeed;
+    public float crouchYScale;
+    float startYScale; 
+
     [Header("Jumping")]
     public float jumpForce;
     public float jumpCooldown;
@@ -22,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode runKey = KeyCode.LeftShift;
+    public KeyCode crouchKey = KeyCode.LeftControl;
 
     [Header("Ground Check")]
     public float playerHeight; 
@@ -46,6 +53,12 @@ public class PlayerMovement : MonoBehaviour
     public bool buttonPressed; 
     Vector3 centerScreen = new Vector3(0.5f, 0.5f, 0f);
 
+    [Header("Slope Handling")]
+    public float maxSlopeAngle; 
+    RaycastHit slopeHit;
+    float fakeGrav = 80.0f;
+    bool exitSlope; 
+
     [Header("Reticle")]
     [SerializeField] Image ret; 
     [SerializeField] Color retColor;
@@ -55,6 +68,13 @@ public class PlayerMovement : MonoBehaviour
     private PlayerController playerController;
     PlayerControls controller;
     
+    public enum MovementState{
+        walking,
+        sprinting,
+        crouching,
+        air
+    }
+    
     void Start()
     {
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
@@ -63,6 +83,7 @@ public class PlayerMovement : MonoBehaviour
         playerRb = GetComponent<Rigidbody>();
         playerRb.freezeRotation = true;
         startSpeed = moveSpeed;
+        startYScale = transform.localScale.y;
     }
 
     private void Update(){
@@ -134,6 +155,7 @@ public class PlayerMovement : MonoBehaviour
             MyInput();
         }
         SpeedControl();
+        StateHandler();
 
         //handles drag
         if(grounded){
@@ -166,17 +188,43 @@ public class PlayerMovement : MonoBehaviour
         if(!toJump && Input.GetKeyUp(jumpKey)){
             toJump = true;
         }
-        
+
+        if(Input.GetKeyDown(crouchKey)){
+            transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
+            playerRb.AddForce(Vector3.down * 5.0f, ForceMode.Impulse);
+        }
+
+        if(Input.GetKeyUp(crouchKey)){
+            transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
+        }
+    }
+
+    private void StateHandler(){
+        if(Input.GetKey(crouchKey)){
+            state = MovementState.crouching; 
+            moveSpeed = crouchSpeed; 
+        } else if(grounded && Input.GetKey(runKey)){
+            state = MovementState.sprinting;
+            moveSpeed = sprintSpeed;
+        } else if(grounded){
+            state = MovementState.walking;
+            moveSpeed = startSpeed;
+        } else {
+            state = MovementState.air; 
+        }
     }
 
     private void MovePlayer(){
         //so you can always walk in the direction you're looking
         moveDirection = orientation.forward * vInput + orientation.right * hInput;
 
-        if(Input.GetKey(runKey)){
-            moveSpeed = sprintSpeed;
-        } else {
-            moveSpeed = startSpeed;
+        if(OnSlope() && !exitSlope){
+            playerRb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20.0f, ForceMode.Force);
+
+            //add downward force to keep player on slope since grav is turned off
+            if(playerRb.velocity.y > 0){
+                playerRb.AddForce(Vector3.down * fakeGrav, ForceMode.Force); 
+            }
         }
 
         if(grounded){
@@ -185,18 +233,31 @@ public class PlayerMovement : MonoBehaviour
             //I think the point of using the airMult is to slow down player mid-air 
             playerRb.AddForce(moveDirection.normalized * moveSpeed * 10 * airMultiplier, ForceMode.Force);
         }
+
+        //turn off gravity while on slope
+        playerRb.useGravity = !OnSlope(); 
     }
 
     private void SpeedControl(){
-        Vector3 flatVel = new Vector3(playerRb.velocity.x, 0f, playerRb.velocity.z);
+        //limit speed on slope
+        if(OnSlope() && !exitSlope){
+            if(playerRb.velocity.magnitude > moveSpeed){
+                playerRb.velocity = playerRb.velocity.normalized * moveSpeed;
+            }
 
-        if(flatVel.magnitude > moveSpeed){
-            Vector3 limitVel = flatVel.normalized * moveSpeed;
-            playerRb.velocity = new Vector3(limitVel.x, playerRb.velocity.y, limitVel.z);
-        }
+        } else {
+
+            Vector3 flatVel = new Vector3(playerRb.velocity.x, 0f, playerRb.velocity.z);
+
+            if(flatVel.magnitude > moveSpeed){
+                Vector3 limitVel = flatVel.normalized * moveSpeed;
+                playerRb.velocity = new Vector3(limitVel.x, playerRb.velocity.y, limitVel.z);
+            }
+        }        
     }
 
     private void Jump(){
+        exitSlope = true; 
         //you want to start y at 0 so that height is always the same
         playerRb.velocity = new Vector3(playerRb.velocity.x, 0f, playerRb.velocity.z);
 
@@ -205,5 +266,20 @@ public class PlayerMovement : MonoBehaviour
 
     private void ResetJump(){
         readyToJump = true;
+        exitSlope = false; 
+    }
+
+    private bool OnSlope(){
+        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f)){
+            //calculate how steep the slope is
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            return angle < maxSlopeAngle && angle != 0; 
+        }
+        //if raycast doesn't hit a slope
+        return false; 
+    }
+
+    private Vector3 GetSlopeMoveDirection(){
+        return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized; 
     }
 }
