@@ -17,7 +17,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Crouching")]
     public float crouchSpeed;
     public float crouchYScale;
-    float startYScale; 
+    float startYScale;
+    bool crouching; 
+    bool crawl; 
 
     [Header("Jumping")]
     public float jumpForce;
@@ -38,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
     public int keyNum = 0;
     bool hasBook;
     public bool placedBook;
-    public bool summon; 
+    bool summon; 
     bool toJump = true; 
     public bool redButtonPressed;
     public bool holding;
@@ -105,10 +107,12 @@ public class PlayerMovement : MonoBehaviour
 
                 //activates button 
             if(Input.GetMouseButtonDown(0) && hit.collider.tag == "Button"){
-                redButtonPressed = true;
-                if(keyNum == 3){
-                    hit.collider.gameObject.GetComponent<Renderer>().material = green;
-                    buttonPressed = true;
+                if(Vector3.Distance(transform.position, hit.collider.transform.position) <= 3.0f){
+                    redButtonPressed = true;
+                    if(keyNum == 3){
+                        hit.collider.gameObject.GetComponent<Renderer>().material = green;
+                        buttonPressed = true;
+                    }
                 }
             } else if(Input.GetMouseButtonUp(0)){
                 redButtonPressed = false;
@@ -141,10 +145,12 @@ public class PlayerMovement : MonoBehaviour
             if(Input.GetMouseButtonUp(0) && hit.collider.tag == "Vessel" && !summon){
                 if(Vector3.Distance(transform.position, hit.collider.transform.position) <= 10.0f){
                     summon = true;
+                    hit.collider.gameObject.GetComponent<NavFollow>().move = true; 
                 }
             } else if (Input.GetMouseButtonUp(0) && hit.collider.tag == "Vessel" && summon){
                 if(Vector3.Distance(transform.position, hit.collider.transform.position) <= 10.0f){
                     summon = false;
+                    hit.collider.gameObject.GetComponent<NavFollow>().move = false; 
                 }
             }
         }
@@ -189,18 +195,20 @@ public class PlayerMovement : MonoBehaviour
             toJump = true;
         }
 
-        if(Input.GetKeyDown(crouchKey)){
+        if(Input.GetKeyDown(crouchKey) && !crouching){
+            crouching = true; 
             transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
             playerRb.AddForce(Vector3.down * 5.0f, ForceMode.Impulse);
-        }
-
-        if(Input.GetKeyUp(crouchKey)){
-            transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
+        } else if(Input.GetKeyDown(crouchKey) && crouching){
+            if(!crawl){
+                crouching = false; 
+                transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
+            }
         }
     }
 
     private void StateHandler(){
-        if(Input.GetKey(crouchKey)){
+        if(crouching){
             state = MovementState.crouching; 
             moveSpeed = crouchSpeed; 
         } else if(grounded && Input.GetKey(runKey)){
@@ -281,5 +289,17 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 GetSlopeMoveDirection(){
         return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized; 
+    }
+
+    void OnTriggerEnter(Collider col){
+        if(col.gameObject.tag == "Crawl Space"){
+            crawl = true; 
+        }
+    }
+
+    void OnTriggerExit(Collider col){
+        if(col.gameObject.tag == "Crawl Space"){
+            crawl = false; 
+        }
     }
 }

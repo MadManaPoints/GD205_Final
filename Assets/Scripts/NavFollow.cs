@@ -1,34 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class NavFollow : MonoBehaviour
 {
     NavMeshAgent agent;
-    Animator animator;
+    Animator anim; 
     PlayerMovement player;
-    bool move; 
-    //place for target to go
+    Rigidbody rbVessel; 
+    public bool move;
+    bool hit; 
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
-
-        player = GameObject.Find("Player").GetComponent<PlayerMovement>(); 
+        anim = GetComponent<Animator>();
+        player = GameObject.Find("Player").GetComponent<PlayerMovement>();
+        //not sure if I need this because of the AI
+        rbVessel = GetComponent<Rigidbody>(); 
+        anim.SetBool("Active", false); 
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(player.summon){
-            move = true;
-            Debug.Log("YERRR");
-        } else {
-            move = false;
-        }
-
         if(move){
+            anim.SetBool("Active", true);
+            Debug.Log("YERRR");
+
             if(Vector3.Distance(transform.position, player.transform.position) >= 4.0f){
                 agent.isStopped = false;
                 agent.SetDestination(player.transform.position);
@@ -37,10 +37,22 @@ public class NavFollow : MonoBehaviour
             }
 
             if(agent.velocity == Vector3.zero){
-                animator.SetBool("Walking", false);
+                anim.SetBool("Walking", false);
             } else {
-                animator.SetBool("Walking", true);
+                anim.SetBool("Walking", true);
             }
+
+        } else {
+            anim.SetBool("Active", false);
+            anim.SetBool("Walking", false); 
+            agent.velocity = Vector3.zero; 
+
+        }
+    }
+
+    void OnCollisionEnter(Collision col){
+        if(col.gameObject.tag != "Ground"){
+            agent.velocity = Vector3.zero; 
         }
     }
 }

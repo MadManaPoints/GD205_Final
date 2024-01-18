@@ -17,6 +17,8 @@ TagManager:
   - Box
   - Floor Button
   - Vessel
+  - Crawl Space
+  - Moving Platform
   layers:
   - Default
   - TransparentFX
