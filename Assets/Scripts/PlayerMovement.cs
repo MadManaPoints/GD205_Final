@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     public float crouchSpeed;
     public float crouchYScale;
     float startYScale;
-    bool crouching; 
+    public bool crouching; 
     bool crawl; 
 
     [Header("Jumping")]
@@ -68,8 +68,7 @@ public class PlayerMovement : MonoBehaviour
     public MeshRenderer meshRender;
     private GameManager gameManager;
     private PlayerController playerController;
-    PlayerControls controller;
-    
+    PlayerControls controller;    
     public enum MovementState{
         walking,
         sprinting,
@@ -125,6 +124,7 @@ public class PlayerMovement : MonoBehaviour
                 placedBook = true;
                 hasBook = false;
             }
+
 
             if(Input.GetMouseButtonDown(0) && !hasBook && hit.collider.tag == "Missing Book"){
                 Destroy(hit.transform.gameObject);

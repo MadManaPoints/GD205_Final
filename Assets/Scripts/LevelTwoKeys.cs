@@ -4,20 +4,15 @@ using UnityEngine;
 
 public class LevelTwoKeys : MonoBehaviour
 {
-    // Start is called before the first frame update
+    KeyManagerTwo keyTracker;
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        keyTracker = GameObject.Find("Key Manager").GetComponent<KeyManagerTwo>(); 
     }
 
     void OnTriggerEnter(Collider col){
         if(col.gameObject.tag == "Player"){
+            keyTracker.levelTwoKeys += 1; 
             Destroy(gameObject); 
         }
     }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class MoveShelf : MonoBehaviour
 {
     bool pressButton;
+    public bool inHallway; 
     [SerializeField] GameObject shelf;
     Vector3 startPos;
     Vector3 shelfPos;
@@ -31,7 +32,7 @@ public class MoveShelf : MonoBehaviour
     {
         shelf.gameObject.transform.position = shelfPos;
 
-        if(pressButton){
+        if(pressButton && !inHallway){
             transform.position = newPos;
             GetComponent<Renderer>().material = green;
 
@@ -42,15 +43,18 @@ public class MoveShelf : MonoBehaviour
             }
         }
         
-        if(!pressButton){
+        if(!pressButton || inHallway){
             transform.position = pos;
-            GetComponent<Renderer>().material = red;
 
             if(shelfPos.z > startPos.z){
                 shelfPos.z -= speed * Time.deltaTime; 
             } else {
                 shelfPos = startPos; 
             }
+        }
+
+        if(!pressButton && !inHallway){
+            GetComponent<Renderer>().material = red;
         }
     }
 

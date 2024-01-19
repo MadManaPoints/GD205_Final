@@ -18,7 +18,6 @@ public class NavFollow : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         player = GameObject.Find("Player").GetComponent<PlayerMovement>();
-        //not sure if I need this because of the AI
         rbVessel = GetComponent<Rigidbody>(); 
         anim.SetBool("Active", false); 
     }
@@ -27,7 +26,7 @@ public class NavFollow : MonoBehaviour
     {
         if(move){
             anim.SetBool("Active", true);
-            Debug.Log("YERRR");
+            //Debug.Log("YERRR");
 
             if(Vector3.Distance(transform.position, player.transform.position) >= 4.0f){
                 agent.isStopped = false;
@@ -48,11 +47,25 @@ public class NavFollow : MonoBehaviour
             agent.velocity = Vector3.zero; 
 
         }
+
+        if(agent.velocity != Vector3.zero && !move){
+            agent.velocity = Vector3.zero; 
+            rbVessel.isKinematic = true; 
+        }
+        if(hit){
+            Debug.Log("Hit");
+            rbVessel.isKinematic = true;
+            move = false;
+            hit = false; 
+        } else {
+            rbVessel.isKinematic = true;
+            rbVessel.isKinematic = false; 
+        }
     }
 
     void OnCollisionEnter(Collision col){
-        if(col.gameObject.tag != "Ground"){
-            agent.velocity = Vector3.zero; 
+        if(col.gameObject.tag == "Wall" || col.gameObject.tag == "Player"){
+            hit = true;  
         }
     }
 }

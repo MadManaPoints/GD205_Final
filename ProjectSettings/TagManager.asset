@@ -19,6 +19,8 @@ TagManager:
   - Vessel
   - Crawl Space
   - Moving Platform
+  - Wall
+  - Altar Book
   layers:
   - Default
   - TransparentFX

@@ -16,7 +16,7 @@ public class ThreeDoorButton : MonoBehaviour
     bool openOuter;
     bool canPress = true;
     //this is a temporary fix so that this button isn't pressed earlier in the level
-    [SerializeField] bool inRoom = true; 
+    public bool inRoom; 
 
     //id for inner door and od for outer
     Vector3 idPos; 
@@ -27,8 +27,9 @@ public class ThreeDoorButton : MonoBehaviour
     [SerializeField] Vector3 [] odStopPos;
 
     //button position
+    Vector3 pos; 
     Vector3 unpressedPos;
-    Vector3 pressedPos; 
+    Vector3 pressedPos;
     void Start()
     {
         player = GameObject.Find("Player").GetComponent<PlayerMovement>();
@@ -45,68 +46,71 @@ public class ThreeDoorButton : MonoBehaviour
 
         unpressedPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         pressedPos = new Vector3(unpressedPos.x, unpressedPos.y - .04f, unpressedPos.z);
+        pos = unpressedPos;  
     }
 
     
     void Update()
     {
-        innerDoor.transform.position = idPos; 
+        innerDoor.transform.position = idPos;
+        transform.position = pos; 
+        
 
         for(int i = 0; i < outerDoors.Length; i++){
             outerDoors[i].transform.position = odPos[i]; 
-        }
-
-        DoorTracker(); 
+        } 
         
         //if(player.redButtonPressed && inRoom){
         if(inRoom){
-            GetComponent<Renderer>().material = green; 
+            DoorTracker();
 
+            if(player.redButtonPressed){
+                GetComponent<Renderer>().material = green;
+                pos = pressedPos; 
+            } else if(!player.redButtonPressed){
+                GetComponent<Renderer>().material = red;
+                pos = unpressedPos;  
+            }
+        }
 
-            if(openInner){
+        if(openInner){
 
-                if(idPos.z > idStopPos.z){
-                    idPos.z -= moveSpeed * Time.deltaTime; 
+            if(idPos.z > idStopPos.z){
+                idPos.z -= moveSpeed * Time.deltaTime; 
+            } else {
+                idPos.z = idStopPos.z; 
+            }
+        }
+
+        if(!openInner){
+
+            if(idPos.z < idStartPos.z){
+                idPos.z += moveSpeed * Time.deltaTime; 
+            } else {
+                idPos.z = idStartPos.z;
+            }
+        }
+
+        if(openOuter){
+
+            for(int i = 0; i < outerDoors.Length; i++){
+                if(odPos[i].z > odStopPos[i].z){
+                    odPos[i].z -= moveSpeed * Time.deltaTime;
                 } else {
-                    idPos.z = idStopPos.z; 
+                    odPos[i].z = odStopPos[i].z;
                 }
             }
+        }
 
-            if(!openInner){
-
-                if(idPos.z < idStartPos.z){
-                    idPos.z += moveSpeed * Time.deltaTime; 
-                } else {
-                    idPos.z = idStartPos.z;
-                }
-            }
-
-            if(openOuter){
-
-                for(int i = 0; i < outerDoors.Length; i++){
-                    if(odPos[i].z > odStopPos[i].z){
-                        odPos[i].z -= moveSpeed * Time.deltaTime;
-                    } else {
-                        odPos[i].z = odStopPos[i].z;
-                    }
-                }
-            }
-
-            if (!openOuter){
+        if (!openOuter){
                     
-                for(int i = 0; i < outerDoors.Length; i++){
-                    if(odPos[i].z < odStartPos[i].z){
-                        odPos[i].z += moveSpeed * Time.deltaTime; 
-                    } else {
-                        odPos[i].z = odStartPos[i].z; 
-                    }
+            for(int i = 0; i < outerDoors.Length; i++){
+                if(odPos[i].z < odStartPos[i].z){
+                    odPos[i].z += moveSpeed * Time.deltaTime; 
+                } else {
+                    odPos[i].z = odStartPos[i].z; 
                 }
             }
-
-        //} else if(!player.redButtonPressed && inRoom){
-        } else if(!inRoom){
-            GetComponent<Renderer>().material = red;
-
         }
     }
 
@@ -123,7 +127,7 @@ public class ThreeDoorButton : MonoBehaviour
             }
         }
 
-        if(Input.GetMouseButtonUp(0)){
+        if(Input.GetMouseButtonUp(0) && inRoom){
             canPress = true;
         }
     }
