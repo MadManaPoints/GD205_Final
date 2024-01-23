@@ -30,12 +30,14 @@ public class PlayerMovement : MonoBehaviour
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode runKey = KeyCode.LeftShift;
-    public KeyCode crouchKey = KeyCode.LeftControl;
+    public KeyCode crouchKey = KeyCode.C;
 
     [Header("Ground Check")]
     public float playerHeight; 
     public LayerMask whatIsGround;
+    public LayerMask box; 
     bool grounded;
+    bool onBlock; 
     //bool hasKey;
     public int keyNum = 0;
     bool hasBook;
@@ -156,6 +158,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
+        onBlock = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, box);
+        //PushOffBlock(); 
 
         if(gameManager.startGame){
             MyInput();
@@ -289,6 +293,12 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 GetSlopeMoveDirection(){
         return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized; 
+    }
+
+    void PushOffBlock(){
+        if(onBlock){
+            playerRb.AddForce(Vector3.up * 8.0f); 
+        }
     }
 
     void OnTriggerEnter(Collider col){

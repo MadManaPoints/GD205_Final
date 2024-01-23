@@ -9,16 +9,14 @@ public class NavFollow : MonoBehaviour
     NavMeshAgent agent;
     Animator anim; 
     PlayerMovement player;
-    Rigidbody rbVessel; 
+    //Rigidbody rbVessel; 
     public bool move;
-    bool hit; 
-
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         player = GameObject.Find("Player").GetComponent<PlayerMovement>();
-        rbVessel = GetComponent<Rigidbody>(); 
+        //rbVessel = GetComponent<Rigidbody>(); 
         anim.SetBool("Active", false); 
     }
 
@@ -46,26 +44,6 @@ public class NavFollow : MonoBehaviour
             anim.SetBool("Walking", false); 
             agent.velocity = Vector3.zero; 
 
-        }
-
-        if(agent.velocity != Vector3.zero && !move){
-            agent.velocity = Vector3.zero; 
-            rbVessel.isKinematic = true; 
-        }
-        if(hit){
-            Debug.Log("Hit");
-            rbVessel.isKinematic = true;
-            move = false;
-            hit = false; 
-        } else {
-            rbVessel.isKinematic = true;
-            rbVessel.isKinematic = false; 
-        }
-    }
-
-    void OnCollisionEnter(Collision col){
-        if(col.gameObject.tag == "Wall" || col.gameObject.tag == "Player"){
-            hit = true;  
         }
     }
 }

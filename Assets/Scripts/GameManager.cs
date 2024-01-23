@@ -14,9 +14,10 @@ public class GameManager : MonoBehaviour
         if(levelTwo){
             startGame = true;
         } 
-        //else {
-        //    startGame = true;
-        //}
+        
+        else {
+            startGame = true;
+        }
     }
     void Awake()
     {
@@ -40,7 +41,7 @@ public class GameManager : MonoBehaviour
             reset = false;
         }
 
-        if(Input.GetKeyDown(KeyCode.Escape) && !isPaused && startGame){
+        if(Input.GetKeyDown(KeyCode.Tab) && !isPaused && startGame){
             isPaused = true;
         }
     }

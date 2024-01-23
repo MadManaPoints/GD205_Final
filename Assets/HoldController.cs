@@ -5,6 +5,7 @@ using UnityEngine;
 public class HoldController : MonoBehaviour
 {
     Rigidbody rb;
+    //[SerializeField] GameObject center; 
 
     [SerializeField]
     PlayerMovement pm;
@@ -20,6 +21,7 @@ public class HoldController : MonoBehaviour
     private float holdForce;
     private bool isHeld;
     private bool snapPosition;
+    bool onBlock; 
 
     void Start()
     {
@@ -28,10 +30,11 @@ public class HoldController : MonoBehaviour
 
     void Update()
     {
+        PushPlayer();
         //set the box being held to the player holding the box
         if(!pm.holding){
             isHeld = false; 
-            gameObject.layer = 0; 
+            gameObject.layer = 7; 
         }
         
         if(gameObject.layer == 3 && pm.holding){
@@ -72,6 +75,27 @@ public class HoldController : MonoBehaviour
         else
         {
             snapPosition = false;
+        }
+    }
+
+    void PushPlayer(){
+
+        if(onBlock){
+            Vector3 direction = (pm.transform.position - transform.position).normalized; 
+            pm.GetComponent<Rigidbody>().AddForce(direction, ForceMode.Impulse); 
+        }
+        
+    }
+
+    void OnTriggerEnter(Collider col){
+        if(col.gameObject.tag == "Player"){
+            onBlock = true; 
+        }
+    }
+
+    void OnTriggerExit(Collider col){
+        if(col.gameObject.tag == "Player"){
+            onBlock = false; 
         }
     }
 }

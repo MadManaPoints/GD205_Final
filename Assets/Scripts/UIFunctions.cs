@@ -51,8 +51,8 @@ public class UIFunctions : MonoBehaviour
         options.SetActive(false);
 
         //level two shortcut 
-        //ret.SetActive(true);
-        //start.SetActive(false);
+        ret.SetActive(true);
+        start.SetActive(false);
     }
 
     void Update()
