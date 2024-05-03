@@ -69,20 +69,13 @@ public class MovePlatform : MonoBehaviour
 
     void FixedUpdate()
     {        
-        //limit velocity
-        //never mind - no longer using AddForce
-        //if(rb.velocity.magnitude > maxSpeed){
-        //    rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxSpeed);
-        //}
-        
-
         if(moving && atPosOne){
             if(transform.position.x < stopPos.x){
                 rb.MovePosition(transform.position + Vector3.right * moveSpeed * Time.deltaTime);
 
                 //moves player when standing on platform
                 if(onBoard){
-                    player.GetComponent<Rigidbody>().MovePosition(player.transform.position + Vector3.right * moveSpeed * Time.deltaTime);
+                    player.GetComponent<Rigidbody>().MovePosition(player.transform.position + Vector3.right * (moveSpeed * 0.85f) * Time.deltaTime);
                 }
                 
             } else {
@@ -98,7 +91,7 @@ public class MovePlatform : MonoBehaviour
                 rb.MovePosition(transform.position + Vector3.left * moveSpeed * Time.deltaTime);
 
                 if(onBoard){
-                    player.GetComponent<Rigidbody>().MovePosition(player.transform.position + Vector3.left * moveSpeed * Time.deltaTime);
+                    player.GetComponent<Rigidbody>().MovePosition(player.transform.position + Vector3.left * (moveSpeed * 0.85f) * Time.deltaTime);
                 }
             } else {
                 transform.position = startPos; 

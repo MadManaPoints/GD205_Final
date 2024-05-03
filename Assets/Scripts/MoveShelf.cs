@@ -15,7 +15,7 @@ public class MoveShelf : MonoBehaviour
     Vector3 pos; 
     Vector3 newPos;
     [SerializeField]
-    float speed = 4.0f; 
+    float speed = 7.0f; 
 
     void Start()
     {

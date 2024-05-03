@@ -21,7 +21,8 @@ public class HoldController : MonoBehaviour
     private float holdForce;
     private bool isHeld;
     private bool snapPosition;
-    bool onBlock; 
+    bool onBlock;
+    float maxSpeed = 5.0f; 
 
     void Start()
     {
@@ -52,29 +53,32 @@ public class HoldController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         if(isHeld)
         {
-            if(!snapPosition)
-            {
+            //if(!snapPosition)
+            //{
+                //will leave this commented out for now. Snapping position occasionally clips through walls 
                 //this snaps the position of the box to the position of the holder the moment that we grab it
-                snapPosition = true;
-                transform.position = holder.position;
-            }
+            //    snapPosition = true;
+            //    transform.position = holder.position;
+            //}
 
             if (Vector3.Distance(transform.position, holder.position) > 0.2f)
             {
+                //snapPosition = true; 
                 //updates the position of the box using physics if we get too close to it
                 Vector3 moveBox = holder.position - transform.position;
-                //rb.velocity = Vector3.Lerp(rb.velocity, moveBox * arbitraryNum * moveBox.magnitude, 5 * Time.deltaTime);
                 rb.velocity = moveBox * arbitraryNum * moveBox.magnitude;
             }
         }
         else
         {
-            snapPosition = false;
+            //snapPosition = false;
+            if(rb.velocity.magnitude > maxSpeed){
+                rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxSpeed);
+            }
         }
     }
 
